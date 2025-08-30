@@ -55,7 +55,7 @@ class FontDatasetGenerator:
         <body>
             <div id="container"></div>
             <script>
-                function renderText(text, fontFamily, containerWidth, fontSize, paddingTop, paddingRight, paddingBottom, paddingLeft) {{
+                function renderText(text, fontFamily, containerWidth, fontSize, paddingTop, paddingRight, paddingBottom, paddingLeft, textAlign) {{
                     const container = document.getElementById('container');
                     container.style.width = containerWidth + 'px';
                     container.style.fontFamily = '"' + fontFamily + '", sans-serif';
@@ -63,6 +63,7 @@ class FontDatasetGenerator:
                     container.style.color = 'black';
                     container.style.wordWrap = 'break-word';
                     container.style.padding = paddingTop + 'px ' + paddingRight + 'px ' + paddingBottom + 'px ' + paddingLeft + 'px';
+                    container.style.textAlign = textAlign;
                     container.textContent = text;
                 }}
             </script>
@@ -82,22 +83,28 @@ class FontDatasetGenerator:
     
     def render_font_sample(self, text, font_family):
         """Render text with specified font in a container of random width and size"""
-        # Random container width and font size
-        container_width = random.randint(200, 800)
+        
         font_size = random.randint(10, 100)
         
         # Random padding for each side
-        padding_top = random.randint(5, 50)
-        padding_right = random.randint(5, 50)
-        padding_bottom = random.randint(5, 50)
-        padding_left = random.randint(5, 50)
+        padding_top = random.randint(0, 150)
+        padding_right = random.randint(0, 150)
+        padding_bottom = random.randint(0, 150)
+        padding_left = random.randint(0, 150)
+
+        # Adjust container width based on text length
+        container_width = int(len(text) * font_size / 10. + random.randint(200, 800))
+        
+        # Random text alignment
+        alignments = ['left', 'center', 'right']
+        text_alignment = random.choice(alignments)
         
         # Escape text for JavaScript
         escaped_text = text.replace('\\', '\\\\').replace('"', '\\"').replace("'", "\\'")
         
         # Render text in container
         self.page.evaluate(f'''
-            renderText("{escaped_text}", "{font_family}", {container_width}, {font_size}, {padding_top}, {padding_right}, {padding_bottom}, {padding_left})
+            renderText("{escaped_text}", "{font_family}", {container_width}, {font_size}, {padding_top}, {padding_right}, {padding_bottom}, {padding_left}, "{text_alignment}")
         ''')
         
         # Take screenshot of container
