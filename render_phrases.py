@@ -118,7 +118,7 @@ class FontDatasetGenerator:
         df = pd.read_csv(csv_path)
         return df['phrase'].tolist()
     
-    def generate_samples(self, texts=None, fonts=None, samples_per_font=50):
+    def generate_samples(self, texts=None, fonts=None, samples_per_font=500):
         """Generate font samples and save as images"""
         # Clear existing data folder
         if self.output_dir.exists():
