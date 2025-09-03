@@ -15,8 +15,8 @@ class FontDatasetGenerator:
     def get_google_fonts(self, limit=50):
         """Get list of popular Google Fonts"""
         return [
-            'Open Sans', 'Roboto', 'Lato', 'Montserrat', 'Source Sans Pro',
-            'Roboto Condensed', 'Oswald', 'Roboto Mono', 'Raleway', 'Nunito',
+            'Open Sans', 'Roboto', 'Lato', 'Montserrat',
+            'Oswald', 'Roboto Mono', 'Raleway', 'Nunito',
             'Ubuntu', 'Playfair Display', 'Merriweather', 'Poppins', 'Inter'
         ][:limit]
     
