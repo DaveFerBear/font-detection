@@ -17,8 +17,8 @@ def get_device() -> torch.device:
 
 
 def build_model(num_classes: int) -> nn.Module:
-    model = models.resnet18(weights=None)
-    model.fc = nn.Linear(model.fc.in_features, num_classes)
+    model = models.resnet50(weights=None)
+    model.fc = nn.Sequential(nn.Dropout(p=0.2), nn.Linear(model.fc.in_features, num_classes))
     return model
 
 
