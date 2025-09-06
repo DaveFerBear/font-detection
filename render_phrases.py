@@ -3,6 +3,7 @@ from pathlib import Path
 import pandas as pd
 import random
 import shutil
+import colorsys
 
 class FontDatasetGenerator:
     def __init__(self, output_dir="data"):
@@ -11,12 +12,50 @@ class FontDatasetGenerator:
         self.playwright = None
         self.browser = None
         self.page = None
+    
+    def generate_contrasting_colors(self):
+        """Generate background and text colors with sufficient contrast"""
+        # Generate random background color
+        bg_hue = random.random()
+        bg_sat = random.uniform(0.1, 0.9)
+        bg_val = random.uniform(0.2, 0.9)
+        
+        bg_r, bg_g, bg_b = colorsys.hsv_to_rgb(bg_hue, bg_sat, bg_val)
+        bg_r, bg_g, bg_b = int(bg_r * 255), int(bg_g * 255), int(bg_b * 255)
+        
+        # Calculate luminance for contrast
+        def luminance(r, g, b):
+            r, g, b = [x/255.0 for x in (r, g, b)]
+            r = r/12.92 if r <= 0.03928 else ((r+0.055)/1.055)**2.4
+            g = g/12.92 if g <= 0.03928 else ((g+0.055)/1.055)**2.4
+            b = b/12.92 if b <= 0.03928 else ((b+0.055)/1.055)**2.4
+            return 0.2126*r + 0.7152*g + 0.0722*b
+        
+        bg_lum = luminance(bg_r, bg_g, bg_b)
+        
+        # Choose text color for good contrast (aim for 4.5:1 ratio minimum)
+        if bg_lum > 0.5:
+            # Light background, use dark text
+            text_val = random.uniform(0.0, 0.3)
+        else:
+            # Dark background, use light text
+            text_val = random.uniform(0.7, 1.0)
+            
+        text_hue = random.random()
+        text_sat = random.uniform(0.0, 0.8)
+        
+        text_r, text_g, text_b = colorsys.hsv_to_rgb(text_hue, text_sat, text_val)
+        text_r, text_g, text_b = int(text_r * 255), int(text_g * 255), int(text_b * 255)
+        
+        return f"rgb({bg_r},{bg_g},{bg_b})", f"rgb({text_r},{text_g},{text_b})"
         
     def get_google_fonts(self, limit=50):
         """Get list of popular Google Fonts"""
         return [
+            'Comic Sans MS', 'Impact', 'Times New Roman',
+            'Arial', 'Lobster', 'Crimson Text',
             'Open Sans', 'Roboto', 'Lato', 'Montserrat',
-            'Oswald', 'Roboto Mono', 'Raleway', 'Nunito',
+            'Oswald', 'Raleway', 'Nunito',
             'Ubuntu', 'Playfair Display', 'Merriweather', 'Poppins', 'Inter'
         ][:limit]
     
@@ -55,12 +94,14 @@ class FontDatasetGenerator:
         <body>
             <div id="container"></div>
             <script>
-                function renderText(text, fontFamily, containerWidth, fontSize, paddingTop, paddingRight, paddingBottom, paddingLeft, textAlign) {{
+                function renderText(text, fontFamily, containerWidth, fontSize, paddingTop, paddingRight, paddingBottom, paddingLeft, textAlign, bgColor, textColor, fontWeight) {{
                     const container = document.getElementById('container');
                     container.style.width = containerWidth + 'px';
                     container.style.fontFamily = '"' + fontFamily + '", sans-serif';
                     container.style.fontSize = fontSize + 'px';
-                    container.style.color = 'black';
+                    container.style.color = textColor || 'black';
+                    container.style.backgroundColor = bgColor || 'white';
+                    container.style.fontWeight = fontWeight || 'normal';
                     container.style.wordWrap = 'break-word';
                     container.style.padding = paddingTop + 'px ' + paddingRight + 'px ' + paddingBottom + 'px ' + paddingLeft + 'px';
                     container.style.textAlign = textAlign;
@@ -99,12 +140,22 @@ class FontDatasetGenerator:
         alignments = ['left', 'center', 'right']
         text_alignment = random.choice(alignments)
         
+        # Use color 50% of the time
+        use_color = random.random() < 0.5
+        if use_color:
+            bg_color, text_color = self.generate_contrasting_colors()
+        else:
+            bg_color, text_color = 'white', 'black'
+        
+        # Random font weight (50% chance of bold)
+        font_weight = 'bold' if random.random() < 0.5 else 'normal'
+        
         # Escape text for JavaScript
         escaped_text = text.replace('\\', '\\\\').replace('"', '\\"').replace("'", "\\'")
         
         # Render text in container
         self.page.evaluate(f'''
-            renderText("{escaped_text}", "{font_family}", {container_width}, {font_size}, {padding_top}, {padding_right}, {padding_bottom}, {padding_left}, "{text_alignment}")
+            renderText("{escaped_text}", "{font_family}", {container_width}, {font_size}, {padding_top}, {padding_right}, {padding_bottom}, {padding_left}, "{text_alignment}", "{bg_color}", "{text_color}", "{font_weight}")
         ''')
         
         # Take screenshot of container
