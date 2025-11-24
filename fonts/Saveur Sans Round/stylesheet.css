@@ -1,0 +1,52 @@
+@font-face {
+    font-family: 'Saveur Sans Round';
+    src: url('SaveurSansRound-Regular.eot');
+    src: local('Saveur Sans Round Regular'), local('SaveurSansRound-Regular'),
+        url('SaveurSansRound-Regular.eot?#iefix') format('embedded-opentype'),
+        url('SaveurSansRound-Regular.woff2') format('woff2'),
+        url('SaveurSansRound-Regular.woff') format('woff'),
+        url('SaveurSansRound-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Saveur Sans Round Semi';
+    src: url('SaveurSansRound-Semi-bold.eot');
+    src: local('Saveur Sans Round Semi-bold'), local('SaveurSansRound-Semi-bold'),
+        url('SaveurSansRound-Semi-bold.eot?#iefix') format('embedded-opentype'),
+        url('SaveurSansRound-Semi-bold.woff2') format('woff2'),
+        url('SaveurSansRound-Semi-bold.woff') format('woff'),
+        url('SaveurSansRound-Semi-bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Saveur Sans Round';
+    src: url('SaveurSansRound-Light.eot');
+    src: local('Saveur Sans Round Light'), local('SaveurSansRound-Light'),
+        url('SaveurSansRound-Light.eot?#iefix') format('embedded-opentype'),
+        url('SaveurSansRound-Light.woff2') format('woff2'),
+        url('SaveurSansRound-Light.woff') format('woff'),
+        url('SaveurSansRound-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Saveur Sans Round';
+    src: url('SaveurSansRound-Bold.eot');
+    src: local('Saveur Sans Round Bold'), local('SaveurSansRound-Bold'),
+        url('SaveurSansRound-Bold.eot?#iefix') format('embedded-opentype'),
+        url('SaveurSansRound-Bold.woff2') format('woff2'),
+        url('SaveurSansRound-Bold.woff') format('woff'),
+        url('SaveurSansRound-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
