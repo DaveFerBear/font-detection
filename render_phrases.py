@@ -4,6 +4,8 @@ import pandas as pd
 import random
 import shutil
 import colorsys
+from urllib.parse import unquote
+from fonts import FONTS
 
 class FontDatasetGenerator:
     def __init__(self, output_dir="data"):
@@ -48,16 +50,33 @@ class FontDatasetGenerator:
         text_r, text_g, text_b = int(text_r * 255), int(text_g * 255), int(text_b * 255)
         
         return f"rgb({bg_r},{bg_g},{bg_b})", f"rgb({text_r},{text_g},{text_b})"
-        
-    def get_google_fonts(self, limit=50):
-        """Get list of popular Google Fonts"""
-        return [
-            'Comic Sans MS', 'Impact', 'Times New Roman',
-            'Arial', 'Lobster', 'Crimson Text',
-            'Open Sans', 'Roboto', 'Lato', 'Montserrat',
-            'Oswald', 'Raleway', 'Nunito',
-            'Ubuntu', 'Playfair Display', 'Merriweather', 'Poppins', 'Inter'
-        ][:limit]
+
+    def categorize_fonts(self):
+        """Categorize fonts into system, Google, and local fonts"""
+        # System fonts (available on most systems)
+        system_fonts = [
+            "Arial", "Helvetica", "Times New Roman",
+            "Georgia", "Courier New", "Verdana"
+        ]
+
+        # Local fonts (loaded from fonts.css)
+        local_fonts = [
+            "Tusker Grotesk", "Saveur Sans Round", "Eurotype BKL",
+            "Extenda", "Bobby Jones Soft", "Bobby Jones Soft Outline",
+            "Bobby Rough Soft", "Bobby Rough Soft Outline", "Ashing",
+            "Bondjlo", "Dodo", "English 111 Presto", "Faylake",
+            "Felt Tip", "Fontuna Stencil", "Merisca", "Natalic",
+            "Kaylar", "Posterman", "Tokyo OneSolid Regular"
+        ]
+
+        # Google Fonts (everything else from FONTS list)
+        google_fonts = [font for font in FONTS if font not in system_fonts and font not in local_fonts]
+
+        return {
+            'system': system_fonts,
+            'google': google_fonts,
+            'local': local_fonts
+        }
     
     def start_browser(self, fonts):
         """Initialize browser instance with all fonts preloaded"""
@@ -65,6 +84,27 @@ class FontDatasetGenerator:
             self.playwright = sync_playwright().start()
             self.browser = self.playwright.chromium.launch(headless=True)
             self.page = self.browser.new_page()
+
+            # Set up route to serve local font files
+            fonts_dir = Path(__file__).parent / "fonts"
+
+            def handle_font_route(route):
+                # Extract the font path from the URL
+                url = route.request.url
+                if "/local-fonts/" in url:
+                    # Get the relative path after "/local-fonts/" and URL-decode it
+                    rel_path = url.split("/local-fonts/")[1]
+                    rel_path = unquote(rel_path)  # Decode %20 to space, etc.
+                    font_file = fonts_dir / rel_path
+
+                    if font_file.exists():
+                        route.fulfill(path=str(font_file))
+                    else:
+                        route.abort()
+                else:
+                    route.continue_()
+
+            self.page.route("**/*", handle_font_route)
             self._setup_fonts(fonts)
     
     def stop_browser(self):
@@ -76,17 +116,36 @@ class FontDatasetGenerator:
     
     def _setup_fonts(self, fonts):
         """Setup HTML page with all fonts preloaded"""
+        # Categorize fonts
+        categorized = self.categorize_fonts()
+
+        # Filter fonts to only include Google Fonts for API loading
+        google_fonts_to_load = [font for font in fonts if font in categorized['google']]
+
+        # Generate Google Fonts API links
         font_links = '\n'.join([
-            f'<link href="https://fonts.googleapis.com/css2?family={font.replace(" ", "+")}:wght@400&display=swap" rel="stylesheet">'
-            for font in fonts
+            f'<link href="https://fonts.googleapis.com/css2?family={font.replace(" ", "+")}:wght@400;700&display=swap" rel="stylesheet">'
+            for font in google_fonts_to_load
         ])
-        
+
+        # Read local fonts.css file and convert relative paths to use our custom routing
+        fonts_css_path = Path(__file__).parent / "fonts.css"
+        local_fonts_css = ""
+        if fonts_css_path.exists():
+            with open(fonts_css_path, 'r') as f:
+                local_fonts_css = f.read()
+                # Convert relative URLs to use our custom HTTP-like scheme that Playwright can intercept
+                # The fonts.css uses "../fonts/" which we'll convert to "http://local-fonts/"
+                local_fonts_css = local_fonts_css.replace('url("../fonts/', 'url("http://local-fonts/')
+                local_fonts_css = local_fonts_css.replace("url('../fonts/", "url('http://local-fonts/")
+
         html_content = f"""
         <!DOCTYPE html>
         <html>
         <head>
             {font_links}
             <style>
+                {local_fonts_css}
                 body {{ margin: 0; padding: 20px; }}
                 #container {{ background: white; }}
             </style>
@@ -111,14 +170,14 @@ class FontDatasetGenerator:
         </body>
         </html>
         """
-        
+
         self.page.set_content(html_content)
-        
+
         # Wait for fonts to load
         self.page.evaluate("""
             async () => {
                 await document.fonts.ready;
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                await new Promise(resolve => setTimeout(resolve, 2000));
             }
         """)
     
@@ -176,36 +235,36 @@ class FontDatasetGenerator:
             print(f"Clearing existing data folder: {self.output_dir}")
             shutil.rmtree(self.output_dir)
         self.output_dir.mkdir(exist_ok=True)
-        
+
         if texts is None:
             all_phrases = self.load_phrases()
             texts = random.sample(all_phrases, min(samples_per_font, len(all_phrases)))
-        
+
         if fonts is None:
-            fonts = self.get_google_fonts(20)
-        
+            fonts = FONTS  # Use all fonts from fonts.py
+
         print(f"Generating samples for {len(fonts)} fonts...")
-        
+
         try:
             self.start_browser(fonts)
-            
+
             for font_idx, font_family in enumerate(fonts):
                 print(f"Processing {font_family} ({font_idx+1}/{len(fonts)})")
-                
+
                 font_dir = self.output_dir / font_family.replace(' ', '_')
                 font_dir.mkdir(exist_ok=True)
-                
+
                 for text_idx, text in enumerate(texts[:samples_per_font]):
                     screenshot = self.render_font_sample(text, font_family)
-                    
+
                     filename = f"sample_{text_idx:02d}.png"
                     filepath = font_dir / filename
-                    
+
                     with open(filepath, 'wb') as f:
                         f.write(screenshot)
-                        
+
                     print(f"  Saved: {filename}")
-        
+
         finally:
             self.stop_browser()
 
