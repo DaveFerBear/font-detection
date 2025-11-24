@@ -6,7 +6,41 @@ import shutil
 import colorsys
 from urllib.parse import unquote
 from tqdm import tqdm
+from multiprocessing import Pool, cpu_count
 from fonts import FONTS
+
+def _process_font_worker(args):
+    """Worker function to process a single font (runs in separate process)"""
+    font_family, texts, output_dir = args
+
+    # Each worker creates its own generator with its own browser
+    generator = FontDatasetGenerator(output_dir=output_dir)
+
+    try:
+        # Start browser for this worker - load all fonts once to reuse browser
+        generator.start_browser(FONTS)
+
+        # Create font directory
+        font_dir = generator.output_dir / font_family.replace(' ', '_')
+        font_dir.mkdir(exist_ok=True, parents=True)
+
+        # Generate samples for this font
+        for text_idx, text in enumerate(texts):
+            screenshot = generator.render_font_sample(text, font_family)
+
+            filename = f"sample_{text_idx:04d}.png"
+            filepath = font_dir / filename
+
+            with open(filepath, 'wb') as f:
+                f.write(screenshot)
+
+    except Exception as e:
+        print(f"Error processing {font_family}: {e}")
+        return None
+    finally:
+        generator.stop_browser()
+
+    return font_family
 
 class FontDatasetGenerator:
     def __init__(self, output_dir="data"):
@@ -229,8 +263,8 @@ class FontDatasetGenerator:
         df = pd.read_csv(csv_path)
         return df['phrase'].tolist()
     
-    def generate_samples(self, texts=None, fonts=None, samples_per_font=500):
-        """Generate font samples and save as images"""
+    def generate_samples(self, texts=None, fonts=None, samples_per_font=500, num_workers=None):
+        """Generate font samples and save as images using multiprocessing"""
         # Clear existing data folder
         if self.output_dir.exists():
             print(f"Clearing existing data folder: {self.output_dir}")
@@ -244,7 +278,36 @@ class FontDatasetGenerator:
         if fonts is None:
             fonts = FONTS  # Use all fonts from fonts.py
 
-        print(f"Generating samples for {len(fonts)} fonts...")
+        if num_workers is None:
+            num_workers = max(1, cpu_count() - 1)  # Leave one core free
+
+        print(f"Generating samples for {len(fonts)} fonts using {num_workers} workers...")
+
+        # Create args for each font
+        tasks = [(font, texts[:samples_per_font], str(self.output_dir)) for font in fonts]
+
+        # Use multiprocessing pool
+        with Pool(processes=num_workers) as pool:
+            list(tqdm(pool.imap(_process_font_worker, tasks), total=len(tasks), desc="Fonts", unit="font"))
+
+        print("Generation complete!")
+
+    def generate_samples_single_thread(self, texts=None, fonts=None, samples_per_font=500):
+        """Single-threaded version (for debugging)"""
+        # Clear existing data folder
+        if self.output_dir.exists():
+            print(f"Clearing existing data folder: {self.output_dir}")
+            shutil.rmtree(self.output_dir)
+        self.output_dir.mkdir(exist_ok=True)
+
+        if texts is None:
+            all_phrases = self.load_phrases()
+            texts = random.sample(all_phrases, min(samples_per_font, len(all_phrases)))
+
+        if fonts is None:
+            fonts = FONTS  # Use all fonts from fonts.py
+
+        print(f"Generating samples for {len(fonts)} fonts (single-threaded)...")
 
         try:
             self.start_browser(fonts)
@@ -266,5 +329,16 @@ class FontDatasetGenerator:
             self.stop_browser()
 
 if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(description='Generate font dataset')
+    parser.add_argument('--workers', type=int, default=None, help='Number of worker processes (default: CPU count - 1)')
+    parser.add_argument('--samples', type=int, default=500, help='Samples per font (default: 500)')
+    parser.add_argument('--single-thread', action='store_true', help='Use single-threaded mode (for debugging)')
+    args = parser.parse_args()
+
     generator = FontDatasetGenerator()
-    generator.generate_samples()
+
+    if args.single_thread:
+        generator.generate_samples_single_thread(samples_per_font=args.samples)
+    else:
+        generator.generate_samples(samples_per_font=args.samples, num_workers=args.workers)
