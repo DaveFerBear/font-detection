@@ -5,6 +5,7 @@ import random
 import shutil
 import colorsys
 from urllib.parse import unquote
+from tqdm import tqdm
 from fonts import FONTS
 
 class FontDatasetGenerator:
@@ -248,22 +249,18 @@ class FontDatasetGenerator:
         try:
             self.start_browser(fonts)
 
-            for font_idx, font_family in enumerate(fonts):
-                print(f"Processing {font_family} ({font_idx+1}/{len(fonts)})")
-
+            for font_family in tqdm(fonts, desc="Fonts", unit="font"):
                 font_dir = self.output_dir / font_family.replace(' ', '_')
                 font_dir.mkdir(exist_ok=True)
 
-                for text_idx, text in enumerate(texts[:samples_per_font]):
+                for text_idx, text in enumerate(tqdm(texts[:samples_per_font], desc=f"  {font_family}", leave=False, unit="sample")):
                     screenshot = self.render_font_sample(text, font_family)
 
-                    filename = f"sample_{text_idx:02d}.png"
+                    filename = f"sample_{text_idx:04d}.png"
                     filepath = font_dir / filename
 
                     with open(filepath, 'wb') as f:
                         f.write(screenshot)
-
-                    print(f"  Saved: {filename}")
 
         finally:
             self.stop_browser()
