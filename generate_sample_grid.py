@@ -6,7 +6,7 @@ from pathlib import Path
 from PIL import Image
 import matplotlib.pyplot as plt
 
-def generate_sample_grid(data_dir="data", output_path="sample_grid.png", rows=4, cols=3):
+def generate_sample_grid(data_dir="data", output_path="sample-font-grid.png", rows=6, cols=3):
     """Create a grid of random font samples"""
 
     data_path = Path(data_dir)
@@ -45,7 +45,7 @@ def generate_sample_grid(data_dir="data", output_path="sample_grid.png", rows=4,
         # Load and display image
         img = Image.open(img_path)
         ax.imshow(img)
-        ax.set_title(font_dir.name.replace('_', ' '), fontsize=10, pad=5)
+        ax.set_title(font_dir.name.replace('_', ' '), fontsize=13, pad=5)
 
         # Add black border around each cell
         for spine in ax.spines.values():
@@ -58,7 +58,7 @@ def generate_sample_grid(data_dir="data", output_path="sample_grid.png", rows=4,
         ax.set_yticks([])
 
     # Adjust spacing to show grid lines clearly
-    plt.subplots_adjust(wspace=0.05, hspace=0.15, left=0.02, right=0.98, top=0.97, bottom=0.02)
+    plt.subplots_adjust(wspace=0.05, hspace=0.08, left=0.02, right=0.98, top=0.98, bottom=0.02)
     plt.savefig(output_path, dpi=150, bbox_inches='tight', facecolor='white')
     print(f"Sample grid saved to: {output_path}")
     plt.close()
@@ -68,8 +68,8 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Generate a grid of random font samples')
     parser.add_argument('--data-dir', default='data', help='Path to data directory')
-    parser.add_argument('--output', default='sample_grid.png', help='Output image path')
-    parser.add_argument('--rows', type=int, default=4, help='Number of rows')
+    parser.add_argument('--output', default='sample-font-grid.png', help='Output image path')
+    parser.add_argument('--rows', type=int, default=6, help='Number of rows')
     parser.add_argument('--cols', type=int, default=3, help='Number of columns')
     parser.add_argument('--seed', type=int, default=None, help='Random seed for reproducibility')
 
