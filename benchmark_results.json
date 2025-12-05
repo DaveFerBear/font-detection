@@ -1,0 +1,136 @@
+{
+  "gemini-2.0-flash-exp": {
+    "accuracy": 10.0,
+    "correct": 1,
+    "total": 10,
+    "results": [
+      {
+        "image": "data/Monoton/sample_0261.png",
+        "true_font": "Monoton",
+        "prediction": "Archivo Narrow",
+        "correct": false
+      },
+      {
+        "image": "data/Lemonada/sample_0233.png",
+        "true_font": "Lemonada",
+        "prediction": "Luckiest Guy",
+        "correct": false
+      },
+      {
+        "image": "data/Frijole/sample_0370.png",
+        "true_font": "Frijole",
+        "prediction": "Bangers",
+        "correct": false
+      },
+      {
+        "image": "data/Arial/sample_0289.png",
+        "true_font": "Arial",
+        "prediction": "Roboto",
+        "correct": false
+      },
+      {
+        "image": "data/Fredoka/sample_0276.png",
+        "true_font": "Fredoka",
+        "prediction": "Fredoka",
+        "correct": true
+      },
+      {
+        "image": "data/DM_Sans/sample_0088.png",
+        "true_font": "DM Sans",
+        "prediction": "Fuzzy",
+        "correct": false
+      },
+      {
+        "image": "data/Lilita_One/sample_0449.png",
+        "true_font": "Lilita One",
+        "prediction": "Roboto",
+        "correct": false
+      },
+      {
+        "image": "data/Russo_One/sample_0176.png",
+        "true_font": "Russo One",
+        "prediction": "Roboto",
+        "correct": false
+      },
+      {
+        "image": "data/Kranky/sample_0418.png",
+        "true_font": "Kranky",
+        "prediction": "Felt Tip",
+        "correct": false
+      },
+      {
+        "image": "data/Pacifico/sample_0144.png",
+        "true_font": "Pacifico",
+        "prediction": "Kaushan Script",
+        "correct": false
+      }
+    ]
+  },
+  "gpt-4o": {
+    "accuracy": 10.0,
+    "correct": 1,
+    "total": 10,
+    "results": [
+      {
+        "image": "data/Monoton/sample_0261.png",
+        "true_font": "Monoton",
+        "prediction": "Monoton",
+        "correct": true
+      },
+      {
+        "image": "data/Lemonada/sample_0233.png",
+        "true_font": "Lemonada",
+        "prediction": "Lobster",
+        "correct": false
+      },
+      {
+        "image": "data/Frijole/sample_0370.png",
+        "true_font": "Frijole",
+        "prediction": "Creepster",
+        "correct": false
+      },
+      {
+        "image": "data/Arial/sample_0289.png",
+        "true_font": "Arial",
+        "prediction": "Anton",
+        "correct": false
+      },
+      {
+        "image": "data/Fredoka/sample_0276.png",
+        "true_font": "Fredoka",
+        "prediction": "Bobby Jones Soft",
+        "correct": false
+      },
+      {
+        "image": "data/DM_Sans/sample_0088.png",
+        "true_font": "DM Sans",
+        "prediction": "Figtree",
+        "correct": false
+      },
+      {
+        "image": "data/Lilita_One/sample_0449.png",
+        "true_font": "Lilita One",
+        "prediction": "Bangers",
+        "correct": false
+      },
+      {
+        "image": "data/Russo_One/sample_0176.png",
+        "true_font": "Russo One",
+        "prediction": "Audiowide",
+        "correct": false
+      },
+      {
+        "image": "data/Kranky/sample_0418.png",
+        "true_font": "Kranky",
+        "prediction": "Barriecito",
+        "correct": false
+      },
+      {
+        "image": "data/Pacifico/sample_0144.png",
+        "true_font": "Pacifico",
+        "prediction": "Lobster",
+        "correct": false
+      }
+    ]
+  }
+}
