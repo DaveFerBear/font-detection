@@ -1,607 +1,134 @@
 {
   "gemini-2.5-pro": {
-    "accuracy": 14.14141414141414,
-    "correct": 14,
-    "total": 99,
+    "accuracy": 22.22222222222222,
+    "correct": 2,
+    "total": 9,
     "results": [
       {
-        "image": "data/Monoton/sample_0361.png",
-        "true_font": "Monoton",
-        "prediction": "Monoton",
-        "correct": true
-      },
-      {
-        "image": "data/Russo_One/sample_0295.png",
-        "true_font": "Russo One",
-        "prediction": "Press Start 2P",
-        "correct": false
-      },
-      {
-        "image": "data/Frijole/sample_0475.png",
-        "true_font": "Frijole",
-        "prediction": "Bobby Rough Soft",
-        "correct": false
-      },
-      {
-        "image": "data/Arial/sample_0333.png",
-        "true_font": "Arial",
-        "prediction": "Helvetica",
-        "correct": false
-      },
-      {
-        "image": "data/Fredoka/sample_0252.png",
+        "image": "data/Fredoka/sample_0276.png",
         "true_font": "Fredoka",
         "prediction": "Fredoka",
         "correct": true
       },
       {
-        "image": "data/Lilita_One/sample_0286.png",
-        "true_font": "Lilita One",
-        "prediction": "Fredoka",
-        "correct": false
-      },
-      {
-        "image": "data/Pacifico/sample_0362.png",
+        "image": "data/Pacifico/sample_0144.png",
         "true_font": "Pacifico",
         "prediction": "Leckerli One",
         "correct": false
       },
       {
-        "image": "data/Grand_Hotel/sample_0475.png",
-        "true_font": "Grand Hotel",
-        "prediction": "Pacifico",
-        "correct": false
-      },
-      {
-        "image": "data/Special_Elite/sample_0084.png",
-        "true_font": "Special Elite",
-        "prediction": "Special Elite",
-        "correct": true
-      },
-      {
-        "image": "data/Glass_Antiqua/sample_0224.png",
-        "true_font": "Glass Antiqua",
-        "prediction": "Patua One",
-        "correct": false
-      },
-      {
-        "image": "data/Jacquard_12/sample_0013.png",
-        "true_font": "Jacquard 12",
-        "prediction": "Jacquard 12",
-        "correct": true
-      },
-      {
-        "image": "data/DM_Sans/sample_0435.png",
+        "image": "data/DM_Sans/sample_0088.png",
         "true_font": "DM Sans",
-        "prediction": "Jost",
-        "correct": false
-      },
-      {
-        "image": "data/Luckiest_Guy/sample_0356.png",
-        "true_font": "Luckiest Guy",
-        "prediction": "Fredoka",
-        "correct": false
-      },
-      {
-        "image": "data/Pompiere/sample_0146.png",
-        "true_font": "Pompiere",
-        "prediction": "Gochi Hand",
-        "correct": false
-      },
-      {
-        "image": "data/Lemonada/sample_0328.png",
-        "true_font": "Lemonada",
-        "prediction": "Fredoka",
-        "correct": false
-      },
-      {
-        "image": "data/Satisfy/sample_0072.png",
-        "true_font": "Satisfy",
-        "prediction": "Dancing Script",
-        "correct": false
-      },
-      {
-        "image": "data/Dela_Gothic_One/sample_0221.png",
-        "true_font": "Dela Gothic One",
-        "prediction": "Lilita One",
-        "correct": false
-      },
-      {
-        "image": "data/Press_Start_2P/sample_0201.png",
-        "true_font": "Press Start 2P",
-        "prediction": "Press Start 2P",
-        "correct": true
-      },
-      {
-        "image": "data/Courier_Prime/sample_0264.png",
-        "true_font": "Courier Prime",
-        "prediction": "Special Elite",
-        "correct": false
-      },
-      {
-        "image": "data/Crimson_Text/sample_0413.png",
-        "true_font": "Crimson Text",
-        "prediction": "EB Garamond",
-        "correct": false
-      },
-      {
-        "image": "data/Inter_Tight/sample_0135.png",
-        "true_font": "Inter Tight",
-        "prediction": "Poppins",
-        "correct": false
-      },
-      {
-        "image": "data/Silkscreen/sample_0141.png",
-        "true_font": "Silkscreen",
-        "prediction": "Press Start 2P",
-        "correct": false
-      },
-      {
-        "image": "data/Fontuna_Stencil/sample_0455.png",
-        "true_font": "Fontuna Stencil",
-        "prediction": "Eater",
-        "correct": false
-      },
-      {
-        "image": "data/Righteous/sample_0121.png",
-        "true_font": "Righteous",
-        "prediction": "Fredoka",
-        "correct": false
-      },
-      {
-        "image": "data/Space_Mono/sample_0375.png",
-        "true_font": "Space Mono",
-        "prediction": "Silkscreen",
-        "correct": false
-      },
-      {
-        "image": "data/Advent_Pro/sample_0358.png",
-        "true_font": "Advent Pro",
-        "prediction": "Poppins",
-        "correct": false
-      },
-      {
-        "image": "data/Anton/sample_0025.png",
-        "true_font": "Anton",
-        "prediction": "Jost",
-        "correct": false
-      },
-      {
-        "image": "data/Kalam/sample_0319.png",
-        "true_font": "Kalam",
-        "prediction": "Indie Flower",
-        "correct": false
-      },
-      {
-        "image": "data/Roboto_Condensed/sample_0384.png",
-        "true_font": "Roboto Condensed",
-        "prediction": "Outfit",
-        "correct": false
-      },
-      {
-        "image": "data/Berkshire_Swash/sample_0019.png",
-        "true_font": "Berkshire Swash",
-        "prediction": "Abril Fatface",
-        "correct": false
-      },
-      {
-        "image": "data/Play/sample_0165.png",
-        "true_font": "Play",
         "prediction": "Rubik",
         "correct": false
       },
       {
-        "image": "data/STIX_Two_Text/sample_0239.png",
-        "true_font": "STIX Two Text",
-        "prediction": "Patua One",
+        "image": "data/Frijole/sample_0370.png",
+        "true_font": "Frijole",
+        "prediction": "Eater",
         "correct": false
       },
       {
-        "image": "data/Bobby_Jones_Soft_Outline/sample_0183.png",
-        "true_font": "Bobby Jones Soft Outline",
-        "prediction": "Bobby Jones Soft Outline",
-        "correct": true
-      },
-      {
-        "image": "data/Creepster/sample_0406.png",
-        "true_font": "Creepster",
-        "prediction": "Creepster",
-        "correct": true
-      },
-      {
-        "image": "data/Alfa_Slab_One/sample_0270.png",
-        "true_font": "Alfa Slab One",
-        "prediction": "Alfa Slab One",
-        "correct": true
-      },
-      {
-        "image": "data/Extenda/sample_0470.png",
-        "true_font": "Extenda",
-        "prediction": "Lilita One",
+        "image": "data/Kranky/sample_0418.png",
+        "true_font": "Kranky",
+        "prediction": "Dodo",
         "correct": false
       },
       {
-        "image": "data/Lexend/sample_0395.png",
-        "true_font": "Lexend",
-        "prediction": "Poppins",
+        "image": "data/Lemonada/sample_0233.png",
+        "true_font": "Lemonada",
+        "prediction": "Bree Serif",
         "correct": false
       },
       {
-        "image": "data/Barlow_Condensed/sample_0063.png",
-        "true_font": "Barlow Condensed",
-        "prediction": "Poppins",
-        "correct": false
-      },
-      {
-        "image": "data/Bondjlo/sample_0323.png",
-        "true_font": "Bondjlo",
-        "prediction": "Playfair Display",
-        "correct": false
-      },
-      {
-        "image": "data/Cabin/sample_0293.png",
-        "true_font": "Cabin",
-        "prediction": "Montserrat",
-        "correct": false
-      },
-      {
-        "image": "data/Jacquard_24/sample_0393.png",
-        "true_font": "Jacquard 24",
-        "prediction": "Jacquard 12",
-        "correct": false
-      },
-      {
-        "image": "data/Josefin_Sans/sample_0488.png",
-        "true_font": "Josefin Sans",
-        "prediction": "Montserrat",
-        "correct": false
-      },
-      {
-        "image": "data/Onest/sample_0423.png",
-        "true_font": "Onest",
-        "prediction": "Source Sans 3",
-        "correct": false
-      },
-      {
-        "image": "data/Orbitron/sample_0304.png",
-        "true_font": "Orbitron",
+        "image": "data/Russo_One/sample_0176.png",
+        "true_font": "Russo One",
         "prediction": "Audiowide",
         "correct": false
       },
       {
-        "image": "data/Times_New_Roman/sample_0310.png",
-        "true_font": "Times New Roman",
-        "prediction": "Times New Roman",
+        "image": "data/Monoton/sample_0261.png",
+        "true_font": "Monoton",
+        "prediction": "Monoton",
         "correct": true
       },
       {
-        "image": "data/Codystar/sample_0241.png",
-        "true_font": "Codystar",
-        "prediction": "Codystar",
-        "correct": true
-      },
-      {
-        "image": "data/Merisca/sample_0365.png",
-        "true_font": "Merisca",
-        "prediction": "Shrikhand",
-        "correct": false
-      },
-      {
-        "image": "data/Shadows_Into_Light/sample_0022.png",
-        "true_font": "Shadows Into Light",
-        "prediction": "Caveat",
-        "correct": false
-      },
-      {
-        "image": "data/Outfit/sample_0370.png",
-        "true_font": "Outfit",
-        "prediction": "Montserrat",
-        "correct": false
-      },
-      {
-        "image": "data/Work_Sans/sample_0030.png",
-        "true_font": "Work Sans",
+        "image": "data/Arial/sample_0289.png",
+        "true_font": "Arial",
         "prediction": "Figtree",
         "correct": false
       },
       {
-        "image": "data/Cinzel/sample_0300.png",
-        "true_font": "Cinzel",
-        "prediction": "Playfair Display",
-        "correct": false
-      },
-      {
-        "image": "data/Audiowide/sample_0417.png",
-        "true_font": "Audiowide",
-        "prediction": "Audiowide",
-        "correct": true
-      },
-      {
-        "image": "data/Playfair_Display/sample_0003.png",
-        "true_font": "Playfair Display",
-        "prediction": "Times New Roman",
-        "correct": false
-      },
-      {
-        "image": "data/Bobby_Rough_Soft_Outline/sample_0030.png",
-        "true_font": "Bobby Rough Soft Outline",
-        "prediction": "Poetsen One",
-        "correct": false
-      },
-      {
-        "image": "data/Caveat/sample_0468.png",
-        "true_font": "Caveat",
-        "prediction": "Gochi Hand",
-        "correct": false
-      },
-      {
-        "image": "data/Roboto/sample_0357.png",
-        "true_font": "Roboto",
-        "prediction": "Nunito",
-        "correct": false
-      },
-      {
-        "image": "data/Roboto_Slab/sample_0293.png",
-        "true_font": "Roboto Slab",
-        "prediction": "Georgia",
-        "correct": false
-      },
-      {
-        "image": "data/Ubuntu/sample_0252.png",
-        "true_font": "Ubuntu",
-        "prediction": "Fredoka",
-        "correct": false
-      },
-      {
-        "image": "data/Bobby_Jones_Soft/sample_0223.png",
-        "true_font": "Bobby Jones Soft",
-        "prediction": "Fredoka",
-        "correct": false
-      },
-      {
-        "image": "data/Patrick_Hand/sample_0477.png",
-        "true_font": "Patrick Hand",
-        "prediction": "Fredoka",
-        "correct": false
-      },
-      {
-        "image": "data/Patua_One/sample_0379.png",
-        "true_font": "Patua One",
-        "prediction": "Abril Fatface",
-        "correct": false
-      },
-      {
-        "image": "data/Merriweather/sample_0423.png",
-        "true_font": "Merriweather",
-        "prediction": "Alegreya",
-        "correct": false
-      },
-      {
-        "image": "data/Eater/sample_0101.png",
-        "true_font": "Eater",
-        "prediction": "Ashing",
-        "correct": false
-      },
-      {
-        "image": "data/Permanent_Marker/sample_0127.png",
-        "true_font": "Permanent Marker",
-        "prediction": "Luckiest Guy",
-        "correct": false
-      },
-      {
-        "image": "data/Chakra_Petch/sample_0256.png",
-        "true_font": "Chakra Petch",
-        "prediction": "Audiowide",
-        "correct": false
-      },
-      {
-        "image": "data/Imbue/sample_0451.png",
-        "true_font": "Imbue",
-        "prediction": "Abril Fatface",
-        "correct": false
-      },
-      {
-        "image": "data/Libre_Franklin/sample_0339.png",
-        "true_font": "Libre Franklin",
-        "prediction": "Domine",
-        "correct": false
-      },
-      {
-        "image": "data/Charis_SIL/sample_0169.png",
-        "true_font": "Charis SIL",
-        "prediction": "Times New Roman",
-        "correct": false
-      },
-      {
-        "image": "data/Tusker_Grotesk/sample_0191.png",
-        "true_font": "Tusker Grotesk",
-        "prediction": "Anton",
-        "correct": false
-      },
-      {
-        "image": "data/Raleway/sample_0453.png",
-        "true_font": "Raleway",
-        "prediction": "Poppins",
-        "correct": false
-      },
-      {
-        "image": "data/Abril_Fatface/sample_0465.png",
-        "true_font": "Abril Fatface",
-        "prediction": "Abril Fatface",
-        "correct": true
-      },
-      {
-        "image": "data/Ultra/sample_0427.png",
-        "true_font": "Ultra",
-        "prediction": "Tokyo OneSolid Regular",
-        "correct": false
-      },
-      {
-        "image": "data/Gochi_Hand/sample_0087.png",
-        "true_font": "Gochi Hand",
-        "prediction": "Gochi Hand",
-        "correct": true
-      },
-      {
-        "image": "data/Georgia/sample_0476.png",
-        "true_font": "Georgia",
-        "prediction": "EB Garamond",
-        "correct": false
-      },
-      {
-        "image": "data/Fjalla_One/sample_0203.png",
-        "true_font": "Fjalla One",
-        "prediction": "Figtree",
-        "correct": false
-      },
-      {
-        "image": "data/Lemon/sample_0407.png",
-        "true_font": "Lemon",
-        "prediction": "Lilita One",
-        "correct": false
-      },
-      {
-        "image": "data/Plaster/sample_0023.png",
-        "true_font": "Plaster",
-        "prediction": "Black Ops One",
-        "correct": false
-      },
-      {
-        "image": "data/Limelight/sample_0256.png",
-        "true_font": "Limelight",
-        "prediction": "Abril Fatface",
-        "correct": false
-      },
-      {
-        "image": "data/Matemasie/sample_0164.png",
-        "true_font": "Matemasie",
+        "image": "data/Lilita_One/sample_0449.png",
+        "true_font": "Lilita One",
         "prediction": null
+      }
+    ]
+  },
+  "gpt-5": {
+    "accuracy": 40.0,
+    "correct": 4,
+    "total": 10,
+    "results": [
+      {
+        "image": "data/Monoton/sample_0261.png",
+        "true_font": "Monoton",
+        "prediction": "Monoton",
+        "correct": true
       },
       {
-        "image": "data/Sigmar_One/sample_0286.png",
-        "true_font": "Sigmar One",
-        "prediction": "Lilita One",
+        "image": "data/Arial/sample_0289.png",
+        "true_font": "Arial",
+        "prediction": "Helvetica",
         "correct": false
       },
       {
-        "image": "data/Oswald/sample_0342.png",
-        "true_font": "Oswald",
+        "image": "data/Kranky/sample_0418.png",
+        "true_font": "Kranky",
+        "prediction": "Kranky",
+        "correct": true
+      },
+      {
+        "image": "data/Fredoka/sample_0276.png",
+        "true_font": "Fredoka",
+        "prediction": "Fredoka",
+        "correct": true
+      },
+      {
+        "image": "data/Russo_One/sample_0176.png",
+        "true_font": "Russo One",
+        "prediction": "Chakra Petch",
+        "correct": false
+      },
+      {
+        "image": "data/Lilita_One/sample_0449.png",
+        "true_font": "Lilita One",
         "prediction": "Fredoka",
         "correct": false
       },
       {
-        "image": "data/Yellowtail/sample_0468.png",
-        "true_font": "Yellowtail",
-        "prediction": "Shrikhand",
+        "image": "data/DM_Sans/sample_0088.png",
+        "true_font": "DM Sans",
+        "prediction": "Montserrat",
         "correct": false
       },
       {
-        "image": "data/Alumni_Sans_Collegiate_One/sample_0490.png",
-        "true_font": "Alumni Sans Collegiate One",
-        "prediction": "Bobby Jones Soft Outline",
+        "image": "data/Pacifico/sample_0144.png",
+        "true_font": "Pacifico",
+        "prediction": "Lobster",
         "correct": false
       },
       {
-        "image": "data/Posterman/sample_0197.png",
-        "true_font": "Posterman",
-        "prediction": "Anton",
-        "correct": false
-      },
-      {
-        "image": "data/Black_Ops_One/sample_0375.png",
-        "true_font": "Black Ops One",
-        "prediction": "Audiowide",
-        "correct": false
-      },
-      {
-        "image": "data/Natalic/sample_0473.png",
-        "true_font": "Natalic",
-        "prediction": "Satisfy",
-        "correct": false
-      },
-      {
-        "image": "data/Comfortaa/sample_0281.png",
-        "true_font": "Comfortaa",
-        "prediction": "Quicksand",
-        "correct": false
-      },
-      {
-        "image": "data/Lacquer/sample_0333.png",
-        "true_font": "Lacquer",
-        "prediction": "Permanent Marker",
-        "correct": false
-      },
-      {
-        "image": "data/Rubik/sample_0245.png",
-        "true_font": "Rubik",
-        "prediction": "Inter",
-        "correct": false
-      },
-      {
-        "image": "data/Sansita_Swashed/sample_0197.png",
-        "true_font": "Sansita Swashed",
-        "prediction": "Abril Fatface",
-        "correct": false
-      },
-      {
-        "image": "data/Jost/sample_0185.png",
-        "true_font": "Jost",
-        "prediction": "Passion One",
-        "correct": false
-      },
-      {
-        "image": "data/Lobster/sample_0110.png",
-        "true_font": "Lobster",
-        "prediction": "Lemon",
-        "correct": false
-      },
-      {
-        "image": "data/Helvetica/sample_0387.png",
-        "true_font": "Helvetica",
-        "prediction": "Roboto",
-        "correct": false
-      },
-      {
-        "image": "data/League_Spartan/sample_0187.png",
-        "true_font": "League Spartan",
-        "prediction": "Figtree",
-        "correct": false
-      },
-      {
-        "image": "data/Kaylar/sample_0065.png",
-        "true_font": "Kaylar",
-        "prediction": "Dancing Script",
-        "correct": false
-      },
-      {
-        "image": "data/Eurotype_BKL/sample_0304.png",
-        "true_font": "Eurotype BKL",
-        "prediction": "Domine",
-        "correct": false
-      },
-      {
-        "image": "data/Bree_Serif/sample_0490.png",
-        "true_font": "Bree Serif",
-        "prediction": "Alfa Slab One",
-        "correct": false
-      },
-      {
-        "image": "data/Titan_One/sample_0330.png",
-        "true_font": "Titan One",
-        "prediction": "Nunito",
-        "correct": false
-      },
-      {
-        "image": "data/Bobby_Rough_Soft/sample_0216.png",
-        "true_font": "Bobby Rough Soft",
-        "prediction": "Poetsen One",
-        "correct": false
-      },
-      {
-        "image": "data/Rye/sample_0415.png",
-        "true_font": "Rye",
-        "prediction": "Rye",
+        "image": "data/Frijole/sample_0370.png",
+        "true_font": "Frijole",
+        "prediction": "Frijole",
         "correct": true
+      },
+      {
+        "image": "data/Lemonada/sample_0233.png",
+        "true_font": "Lemonada",
+        "prediction": "Lilita One",
+        "correct": false
       }
     ]
   }

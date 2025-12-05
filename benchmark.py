@@ -115,12 +115,15 @@ def predict_font(image_path, model, system_prompt):
     ]
 
     try:
+        # gpt-5 requires temperature=1, other models can use 0
+        temp = 1 if "gpt-5" in model else 0
+
         response = completion(
             model=model,
             messages=messages,
             api_key=api_key,
             max_tokens=4096,
-            temperature=0,
+            temperature=temp,
             timeout=120
         )
 
@@ -191,7 +194,7 @@ def benchmark_models(data_dir="data", num_samples=100, seed=42, max_workers=8):
 
     models = {
         "gemini-2.5-pro": "gemini/gemini-2.5-pro",
-        # "gpt-4o": "gpt-4o"
+        "gpt-5": "gpt-5"
     }
 
     results = {}
@@ -253,14 +256,162 @@ def save_results(results, output_path="benchmark_results.json"):
         json.dump(results, f, indent=2)
     print(f"\nResults saved to {output_path}")
 
+def plot_results(results, output_path="benchmark_plot.png"):
+    """Create visualization of benchmark results"""
+    import matplotlib.pyplot as plt
+    import numpy as np
+    from collections import defaultdict
+
+    fig = plt.figure(figsize=(16, 10))
+    gs = fig.add_gridspec(3, 2, hspace=0.3, wspace=0.3)
+
+    model_names = list(results.keys())
+
+    # 1. Overall Accuracy Comparison (top left)
+    ax1 = fig.add_subplot(gs[0, 0])
+    accuracies = [results[m]['accuracy'] for m in model_names]
+    colors = ['#4285F4', '#EA4335'][:len(model_names)]
+    bars = ax1.bar(model_names, accuracies, color=colors, alpha=0.8, edgecolor='black', linewidth=1.5)
+    ax1.set_ylabel('Accuracy (%)', fontsize=12, fontweight='bold')
+    ax1.set_title('Overall Accuracy Comparison', fontsize=14, fontweight='bold', pad=15)
+    ax1.set_ylim(0, 100)
+    ax1.grid(axis='y', alpha=0.3, linestyle='--')
+
+    # Add value labels on bars
+    for bar, acc in zip(bars, accuracies):
+        height = bar.get_height()
+        ax1.text(bar.get_x() + bar.get_width()/2., height,
+                f'{acc:.1f}%', ha='center', va='bottom', fontweight='bold', fontsize=11)
+
+    # 2. Correct/Incorrect breakdown (top right)
+    ax2 = fig.add_subplot(gs[0, 1])
+    x = np.arange(len(model_names))
+    width = 0.35
+
+    correct_counts = [results[m]['correct'] for m in model_names]
+    incorrect_counts = [results[m]['total'] - results[m]['correct'] for m in model_names]
+
+    bars1 = ax2.bar(x, correct_counts, width, label='Correct', color='#34A853', alpha=0.8, edgecolor='black', linewidth=1.5)
+    bars2 = ax2.bar(x, incorrect_counts, width, bottom=correct_counts, label='Incorrect',
+                   color='#EA4335', alpha=0.8, edgecolor='black', linewidth=1.5)
+
+    ax2.set_ylabel('Number of Samples', fontsize=12, fontweight='bold')
+    ax2.set_title('Correct vs Incorrect Predictions', fontsize=14, fontweight='bold', pad=15)
+    ax2.set_xticks(x)
+    ax2.set_xticklabels(model_names)
+    ax2.legend(frameon=True, shadow=True)
+    ax2.grid(axis='y', alpha=0.3, linestyle='--')
+
+    # 3. Per-font accuracy heatmap (middle row, spans both columns)
+    ax3 = fig.add_subplot(gs[1, :])
+
+    # Get per-font accuracy for each model
+    font_accuracies = defaultdict(lambda: {})
+    all_fonts = set()
+
+    for model_name in model_names:
+        font_results = defaultdict(lambda: {'correct': 0, 'total': 0})
+        for r in results[model_name]['results']:
+            if r['prediction'] is not None:
+                font = r['true_font']
+                all_fonts.add(font)
+                font_results[font]['total'] += 1
+                if r.get('correct', False):
+                    font_results[font]['correct'] += 1
+
+        for font, counts in font_results.items():
+            acc = (counts['correct'] / counts['total'] * 100) if counts['total'] > 0 else 0
+            font_accuracies[font][model_name] = acc
+
+    # Sort fonts by average accuracy (hardest first)
+    fonts_sorted = sorted(all_fonts,
+                         key=lambda f: np.mean([font_accuracies[f].get(m, 0) for m in model_names]))
+
+    # Limit to top 20 hardest + top 20 easiest fonts (or all if fewer)
+    if len(fonts_sorted) > 40:
+        fonts_to_show = fonts_sorted[:20] + fonts_sorted[-20:]
+    else:
+        fonts_to_show = fonts_sorted
+
+    # Create heatmap data
+    heatmap_data = np.array([[font_accuracies[f].get(m, 0) for m in model_names]
+                             for f in fonts_to_show])
+
+    im = ax3.imshow(heatmap_data, cmap='RdYlGn', aspect='auto', vmin=0, vmax=100)
+    ax3.set_xticks(np.arange(len(model_names)))
+    ax3.set_yticks(np.arange(len(fonts_to_show)))
+    ax3.set_xticklabels(model_names, fontsize=11)
+    ax3.set_yticklabels(fonts_to_show, fontsize=8)
+    ax3.set_title('Per-Font Accuracy (Hardest 20 + Easiest 20)', fontsize=14, fontweight='bold', pad=15)
+
+    # Add colorbar
+    cbar = plt.colorbar(im, ax=ax3)
+    cbar.set_label('Accuracy (%)', rotation=270, labelpad=20, fontweight='bold')
+
+    # 4. Top 10 Most Confused Fonts (bottom left)
+    ax4 = fig.add_subplot(gs[2, 0])
+
+    # Aggregate mistakes across models
+    mistake_counts = defaultdict(int)
+    for model_name in model_names:
+        for r in results[model_name]['results']:
+            if not r.get('correct', True) and r['prediction'] is not None:
+                mistake_counts[r['true_font']] += 1
+
+    top_mistakes = sorted(mistake_counts.items(), key=lambda x: x[1], reverse=True)[:10]
+
+    if top_mistakes:
+        fonts_mistake, counts_mistake = zip(*top_mistakes)
+        y_pos = np.arange(len(fonts_mistake))
+        ax4.barh(y_pos, counts_mistake, color='#EA4335', alpha=0.8, edgecolor='black', linewidth=1.5)
+        ax4.set_yticks(y_pos)
+        ax4.set_yticklabels(fonts_mistake, fontsize=9)
+        ax4.invert_yaxis()
+        ax4.set_xlabel('Number of Mistakes', fontsize=11, fontweight='bold')
+        ax4.set_title('Top 10 Most Confused Fonts', fontsize=13, fontweight='bold', pad=15)
+        ax4.grid(axis='x', alpha=0.3, linestyle='--')
+
+    # 5. Sample Predictions (bottom right) - show some example mistakes
+    ax5 = fig.add_subplot(gs[2, 1])
+    ax5.axis('off')
+
+    # Collect interesting mistakes (different predictions between models)
+    example_text = "Example Mistakes:\n\n"
+    examples_shown = 0
+
+    for model_name in model_names:
+        mistakes = [r for r in results[model_name]['results']
+                   if not r.get('correct', True) and r['prediction'] is not None]
+
+        for mistake in mistakes[:3]:  # Show up to 3 per model
+            example_text += f"{model_name}:\n"
+            example_text += f"  True: {mistake['true_font']}\n"
+            example_text += f"  Predicted: {mistake['prediction']}\n\n"
+            examples_shown += 1
+            if examples_shown >= 8:
+                break
+        if examples_shown >= 8:
+            break
+
+    ax5.text(0.05, 0.95, example_text, transform=ax5.transAxes,
+            fontsize=9, verticalalignment='top', fontfamily='monospace',
+            bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.3))
+
+    plt.suptitle('Font Classification Benchmark Results',
+                fontsize=16, fontweight='bold', y=0.98)
+
+    plt.savefig(output_path, dpi=150, bbox_inches='tight', facecolor='white')
+    print(f"\nVisualization saved to {output_path}")
+    plt.close()
+
 if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description='Benchmark vision models on font classification')
     parser.add_argument('--data-dir', default='data', help='Path to data directory')
-    parser.add_argument('--num-samples', type=int, default=100, help='Number of samples to test')
+    parser.add_argument('--num-samples', type=int, default=40, help='Number of samples to test')
     parser.add_argument('--seed', type=int, default=42, help='Random seed')
-    parser.add_argument('--workers', type=int, default=8, help='Max parallel threads')
+    parser.add_argument('--workers', type=int, default=16, help='Max parallel threads')
     parser.add_argument('--output', default='benchmark_results.json', help='Output JSON path')
 
     args = parser.parse_args()
@@ -278,3 +429,7 @@ if __name__ == "__main__":
 
     # Save results
     save_results(results, args.output)
+
+    # Plot results
+    plot_output = args.output.replace('.json', '.png')
+    plot_results(results, plot_output)
