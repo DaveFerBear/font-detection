@@ -1,0 +1,54 @@
+{
+  "gemini-2.5-pro": [
+    {
+      "num_classes": 2,
+      "accuracy": 100.0,
+      "correct": 2,
+      "total": 2
+    },
+    {
+      "num_classes": 4,
+      "accuracy": 75.0,
+      "correct": 3,
+      "total": 4
+    },
+    {
+      "num_classes": 8,
+      "accuracy": 37.5,
+      "correct": 3,
+      "total": 8
+    },
+    {
+      "num_classes": 16,
+      "accuracy": 37.5,
+      "correct": 6,
+      "total": 16
+    }
+  ],
+  "gpt-5": [
+    {
+      "num_classes": 2,
+      "accuracy": 100.0,
+      "correct": 2,
+      "total": 2
+    },
+    {
+      "num_classes": 4,
+      "accuracy": 75.0,
+      "correct": 3,
+      "total": 4
+    },
+    {
+      "num_classes": 8,
+      "accuracy": 87.5,
+      "correct": 7,
+      "total": 8
+    },
+    {
+      "num_classes": 16,
+      "accuracy": 62.5,
+      "correct": 10,
+      "total": 16
+    }
+  ]
+}

@@ -188,9 +188,10 @@ def benchmark_models(data_dir="data", num_samples=100, seed=42, max_workers=8):
     samples = get_random_samples(data_dir, num_samples, seed)
     print(f"Selected {len(samples)} samples")
 
-    # Create system prompt with all fonts
-    system_prompt = create_system_prompt(FONTS)
-    print(f"\nSystem prompt created with {len(FONTS)} fonts")
+    # Create system prompt with only fonts in the sample
+    sample_fonts = [sample['true_font'] for sample in samples]
+    system_prompt = create_system_prompt(sample_fonts)
+    print(f"\nSystem prompt created with {len(sample_fonts)} fonts")
 
     models = {
         "gemini-2.5-pro": "gemini/gemini-2.5-pro",
