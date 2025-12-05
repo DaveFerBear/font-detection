@@ -7,12 +7,18 @@ import base64
 from pathlib import Path
 from collections import Counter
 import json
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from threading import Lock
+from tqdm import tqdm
 
 from litellm import completion
 from fonts import FONTS
 
 from dotenv import load_dotenv
 load_dotenv()
+
+# Thread-safe print lock
+print_lock = Lock()
 
 def encode_image_base64(image_path):
     """Encode image to base64 string"""
@@ -54,7 +60,22 @@ The image contains text rendered in one of the following {len(fonts)} fonts:
 
 {fonts_list}
 
-Analyze the image carefully and respond with ONLY the exact font name from the list above. Do not include any explanation, reasoning, or additional text - just the font name."""
+CRITICAL: Respond with ONLY the exact font name from the list above.
+- DO NOT include any explanation
+- DO NOT include reasoning
+- DO NOT include confidence scores
+- DO NOT include any other text
+- ONLY output the font name, nothing else
+
+Example valid responses:
+Arial
+Times New Roman
+Montserrat
+
+Invalid responses:
+"The font is Arial"
+"Arial (high confidence)"
+"I believe this is Arial"""
 
     return prompt
 
@@ -68,19 +89,26 @@ def predict_font(image_path, model, system_prompt):
     # (some models don't support system role with vision)
     user_text = f"{system_prompt}\n\nWhat font is used in this image?"
 
+    # Get API key based on model
+    api_key = None
+    if "gemini" in model:
+        api_key = os.getenv("GEMINI_API_KEY")
+    elif "gpt" in model:
+        api_key = os.getenv("OPENAI_API_KEY")
+
     messages = [
         {
             "role": "user",
             "content": [
                 {
+                    "type": "text",
+                    "text": user_text
+                },
+                {
                     "type": "image_url",
                     "image_url": {
                         "url": f"data:image/png;base64,{image_b64}"
                     }
-                },
-                {
-                    "type": "text",
-                    "text": user_text
                 }
             ]
         }
@@ -90,9 +118,10 @@ def predict_font(image_path, model, system_prompt):
         response = completion(
             model=model,
             messages=messages,
-            max_tokens=50,
+            api_key=api_key,
+            max_tokens=4096,
             temperature=0,
-            drop_params=True
+            timeout=120
         )
 
         content = response.choices[0].message.content
@@ -105,9 +134,8 @@ def predict_font(image_path, model, system_prompt):
         return prediction
 
     except Exception as e:
-        print(f"  Error with {model}: {e}")
-        import traceback
-        traceback.print_exc()
+        with print_lock:
+            print(f"  Error with {model}: {e}")
         return None
 
 def normalize_font_name(name):
@@ -136,8 +164,22 @@ def calculate_accuracy(results):
     accuracy = (correct / total * 100) if total > 0 else 0
     return accuracy, correct, total
 
-def benchmark_models(data_dir="data", num_samples=10, seed=42):
-    """Benchmark both models"""
+def process_sample(args):
+    """Worker function to process a single sample"""
+    sample, model_id, system_prompt = args
+
+    prediction = predict_font(sample['path'], model_id, system_prompt)
+
+    result = {
+        'image': str(sample['path']),
+        'true_font': sample['true_font'],
+        'prediction': prediction,
+    }
+
+    return result
+
+def benchmark_models(data_dir="data", num_samples=100, seed=42, max_workers=8):
+    """Benchmark both models with parallel requests"""
 
     print(f"Loading {num_samples} random samples from {data_dir}...")
     samples = get_random_samples(data_dir, num_samples, seed)
@@ -148,35 +190,31 @@ def benchmark_models(data_dir="data", num_samples=10, seed=42):
     print(f"\nSystem prompt created with {len(FONTS)} fonts")
 
     models = {
-        "gemini-2.0-flash-exp": "gemini/gemini-2.0-flash-exp",
-        "gpt-4o": "gpt-4o"
+        "gemini-2.5-pro": "gemini/gemini-2.5-pro",
+        # "gpt-4o": "gpt-4o"
     }
 
     results = {}
 
     for model_name, model_id in models.items():
         print(f"\n{'='*60}")
-        print(f"Testing {model_name}")
+        print(f"Testing {model_name} with {max_workers} parallel threads")
         print('='*60)
+
+        # Prepare tasks for all samples
+        tasks = [(sample, model_id, system_prompt) for sample in samples]
 
         model_results = []
 
-        for i, sample in enumerate(samples, 1):
-            print(f"\n[{i}/{len(samples)}] Testing {sample['true_font']}...")
-            print(f"  Image: {sample['path'].name}")
+        # Process samples in parallel
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = [executor.submit(process_sample, task) for task in tasks]
 
-            prediction = predict_font(sample['path'], model_id, system_prompt)
-
-            result = {
-                'image': str(sample['path']),
-                'true_font': sample['true_font'],
-                'prediction': prediction,
-            }
-
-            model_results.append(result)
-
-            print(f"  Predicted: {prediction}")
-            print(f"  Actual: {sample['true_font']}")
+            # Use tqdm to show progress
+            for future in tqdm(as_completed(futures), total=len(futures),
+                             desc=f"{model_name}", unit="sample"):
+                result = future.result()
+                model_results.append(result)
 
         # Calculate accuracy
         accuracy, correct, total = calculate_accuracy(model_results)
@@ -220,8 +258,9 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Benchmark vision models on font classification')
     parser.add_argument('--data-dir', default='data', help='Path to data directory')
-    parser.add_argument('--num-samples', type=int, default=10, help='Number of samples to test')
+    parser.add_argument('--num-samples', type=int, default=100, help='Number of samples to test')
     parser.add_argument('--seed', type=int, default=42, help='Random seed')
+    parser.add_argument('--workers', type=int, default=8, help='Max parallel threads')
     parser.add_argument('--output', default='benchmark_results.json', help='Output JSON path')
 
     args = parser.parse_args()
@@ -230,7 +269,8 @@ if __name__ == "__main__":
     results = benchmark_models(
         data_dir=args.data_dir,
         num_samples=args.num_samples,
-        seed=args.seed
+        seed=args.seed,
+        max_workers=args.workers
     )
 
     # Print summary
